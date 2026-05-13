@@ -10,6 +10,7 @@ new Notice("Failed to fetch Jira token from env variable");
 let titleResult = "";
 let parentIssueId = "";
 let fixVersion = "";
+let status = "";
 try {
 const data = await tp.user.fetchJiraTicketFields(
 JIRA_SUBDOMAIN,
@@ -19,6 +20,7 @@ issueId
 );
 titleResult = data.fields.summary ?? "";
 parentIssueId = data.fields.parent?.key ?? "";
+status = data.fields.status?.name ?? "";
 const fixVersions = data.fields.fixVersions;
 if (Array.isArray(fixVersions) && fixVersions.length >= 1) {
 fixVersion = fixVersions[0].name ?? "";
@@ -38,6 +40,7 @@ const newFrontmatter = {
 ...existingFrontmatter,
 "Jira ticket": `https://${JIRA_SUBDOMAIN}.atlassian.net/browse/${issueId}`,
 "Title": titleResult,
+"Status": status,
 "Started on": existingFrontmatter["Started on"] ?? null,
 "Finished on": existingFrontmatter["Finished on"] ?? null,
 tags: existingTags

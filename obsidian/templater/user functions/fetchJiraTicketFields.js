@@ -5,7 +5,7 @@ async function fetchJiraTicketFields(subdomain, email, token, issueId) {
 	return new Promise((resolve, reject) => {
 		const options = {
 			hostname: `${subdomain}.atlassian.net`,
-			path: `/rest/api/3/issue/${issueId}?fields=summar,fixVersions,parent`,
+			path: `/rest/api/3/issue/${issueId}?fields=summary,fixVersions,parent,status`,
 			method: "GET",
 			headers: {
 				Authorization: `Basic ${credentials}`,
