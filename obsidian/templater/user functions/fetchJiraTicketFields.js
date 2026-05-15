@@ -25,7 +25,8 @@ async function fetchJiraTicketFields(subdomain, email, token, issueId) {
 						),
 					);
 				} else {
-					resolve(JSON.parse(data));
+					const parsed = JSON.parse(data);
+					resolve(sanitizeStringValues(parsed));
 				}
 			});
 		});
@@ -33,6 +34,22 @@ async function fetchJiraTicketFields(subdomain, email, token, issueId) {
 		request.on("error", reject);
 		request.end();
 	});
+}
+
+/* Replace double quotes in ticket fields with single quotes */
+function sanitizeStringValues(value) {
+	if (typeof value === "string") {
+		return value.replace(/"/g, "'");
+	}
+	if (Array.isArray(value)) {
+		return value.map(sanitizeStringValues);
+	}
+	if (value !== null && typeof value === "object") {
+		return Object.fromEntries(
+			Object.entries(value).map(([k, v]) => [k, sanitizeStringValues(v)]),
+		);
+	}
+	return value;
 }
 
 module.exports = fetchJiraTicketFields;
